@@ -1,0 +1,86 @@
+        -:    0:Source:prog.c
+        -:    0:Graph:prog.gcno
+        -:    0:Data:prog.gcda
+        -:    0:Runs:6
+        -:    1:/*
+        -:    2:Parker Hix
+        -:    3:*/
+        -:    4:#include <float.h>
+        -:    5:#include <stdio.h>
+        -:    6:#include <stdlib.h>
+        -:    7:
+        -:    8:// removed if-statements in favor of ternary assignments
+        2:    9:void selectionSort(float numbers[], int count) {
+        -:   10:  // Unroll outer loop for count = 4 (NUM_VALUES = 4)
+        -:   11:  // outer = 0
+        2:   12:  int minIndex = 0;
+       2*:   13:  minIndex = numbers[1] < numbers[minIndex] ? 1 : minIndex;
+       2*:   14:  minIndex = numbers[2] < numbers[minIndex] ? 2 : minIndex;
+       2*:   15:  minIndex = numbers[3] < numbers[minIndex] ? 3 : minIndex;
+        2:   16:  float swapTemp = numbers[0];
+        2:   17:  numbers[0] = numbers[minIndex];
+        2:   18:  numbers[minIndex] = swapTemp;
+        -:   19:
+        -:   20:  // outer = 1
+        2:   21:  minIndex = 1;
+        -:   22:  // Unroll inner loop for outer = 1: inner = 2, 3
+       2*:   23:  minIndex = numbers[2] < numbers[minIndex] ? 2 : minIndex;
+       2*:   24:  minIndex = numbers[3] < numbers[minIndex] ? 3 : minIndex;
+        2:   25:  swapTemp = numbers[1];
+        2:   26:  numbers[1] = numbers[minIndex];
+        2:   27:  numbers[minIndex] = swapTemp;
+        -:   28:
+        -:   29:  // outer = 2
+        2:   30:  minIndex = 2;
+        -:   31:  // Unroll inner loop for outer = 2: inner = 3
+       2*:   32:  minIndex = numbers[3] < numbers[minIndex] ? 3 : minIndex;
+        2:   33:  swapTemp = numbers[2];
+        2:   34:  numbers[2] = numbers[minIndex];
+        2:   35:  numbers[minIndex] = swapTemp;
+        -:   36:
+        2:   37:}
+        -:   38:
+        6:   39:int main(int argc, char *argv[]) {
+        6:   40:  if (argc != 3) {
+        2:   41:    fprintf(stderr, "Usage: %s <input filename> <output filename>\n", argv[0]);
+        2:   42:    return 1;
+        -:   43:  }
+        -:   44:
+        4:   45:  const int NUM_VALUES = 4;
+        -:   46:
+        4:   47:  FILE *infilename = fopen(argv[1], "r");
+        4:   48:  if (infilename == NULL) {
+        1:   49:    fprintf(stderr, "Error: could not open input file '%s'\n", argv[1]);
+        1:   50:    return 1;
+        -:   51:  }
+        -:   52:
+        3:   53:  float values[NUM_VALUES];
+        -:   54:
+       12:   55:  for (int i = 0; i < NUM_VALUES; i++) {
+        -:   56:    float value;
+       10:   57:    if (fscanf(infilename, "%f", &value) != 1) {
+        1:   58:      fprintf(stderr, "Error: failed to read float from input file\n");
+        1:   59:      fclose(infilename);
+        1:   60:      return 1;
+        -:   61:    }
+        9:   62:    values[i] = value;
+        -:   63:  }
+        -:   64:
+        2:   65:  fclose(infilename);
+        -:   66:
+        2:   67:  selectionSort(values, NUM_VALUES);
+        -:   68:
+        2:   69:  FILE *outfilename = fopen(argv[2], "w");
+        2:   70:  if (outfilename == NULL) {
+    #####:   71:    fprintf(stderr, "Error: could not open output file '%s'\n", argv[2]);
+    #####:   72:    return 1;
+        -:   73:  }
+        -:   74:  
+       10:   75:  for (int i = 0; i < NUM_VALUES; i++) {
+        8:   76:    fprintf(outfilename, "%0.1f\n", values[i]);
+        -:   77:  }
+        -:   78:
+        2:   79:  fclose(outfilename);
+        -:   80:
+        2:   81:  return 0;
+        -:   82:}
